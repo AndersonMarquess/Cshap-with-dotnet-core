@@ -28,7 +28,8 @@ namespace SalesWebMvc {
         private void ConfigureDatabase(IServiceCollection services) {
             services.AddDbContext<SalesWebMvcContext>(
                 options => options.UseMySql(
-                    Configuration.GetConnectionString("SalesWebMvcPath")
+                    Configuration.GetConnectionString("SalesWebMvcPath"),
+                    builder => builder.MigrationsAssembly("SalesWebMvc")
                 )
             );
         }
