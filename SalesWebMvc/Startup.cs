@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SalesWebMvc.Data;
+using SalesWebMvc.Services;
 
 namespace SalesWebMvc {
     public class Startup {
@@ -22,12 +23,13 @@ namespace SalesWebMvc {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             ConfigureDatabase(services);
-            RegisterDBService(services);
+            RegisterCommonService(services);
             services.AddControllersWithViews();
         }
 
-        private static void RegisterDBService(IServiceCollection services) {
+        private static void RegisterCommonService(IServiceCollection services) {
             services.AddScoped<DBService>();
+            services.AddScoped<SellerService>();
         }
 
         private void ConfigureDatabase(IServiceCollection services) {
