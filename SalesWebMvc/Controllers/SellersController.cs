@@ -33,14 +33,7 @@ namespace SalesWebMvc.Controllers {
         }
 
         public IActionResult Delete(int? id) {
-            if (id != null) {
-                var seller = _sellerService.FindById(id.Value);
-                if (seller != null) {
-                    return View(seller);
-                }
-            }
-
-            return NotFound();
+            return GetViewForSeller(id);
         }
 
         [HttpPost]
@@ -48,6 +41,20 @@ namespace SalesWebMvc.Controllers {
         public IActionResult Delete(int id) {
             _sellerService.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Details(int? id) {
+            return GetViewForSeller(id);
+        }
+
+        private IActionResult GetViewForSeller(int? id) {
+            if (id != null) {
+                var seller = _sellerService.FindById(id.Value);
+                if (seller != null) {
+                    return View(seller);
+                }
+            }
+            return NotFound();
         }
     }
 }
