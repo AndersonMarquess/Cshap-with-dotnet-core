@@ -30,6 +30,7 @@ namespace SalesWebMvc {
         private static void RegisterCommonService(IServiceCollection services) {
             services.AddScoped<DBService>();
             services.AddScoped<SellerService>();
+            services.AddScoped<DepartmentService>();
         }
 
         private void ConfigureDatabase(IServiceCollection services) {
