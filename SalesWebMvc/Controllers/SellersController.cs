@@ -1,5 +1,6 @@
+using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SalesWebMvc.Exceptions;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
@@ -55,36 +56,43 @@ namespace SalesWebMvc.Controllers {
                     return View(seller);
                 }
             }
-            return NotFound();
+            return RedirectToAction(nameof(Error), new { message = "Invalid id" });
         }
 
         public IActionResult Edit(int? id) {
             if (id != null) {
                 var seller = _sellerService.FindById(id.Value);
                 if (seller == null) {
-                    return NotFound();
+                    return RedirectToAction(nameof(Error), new { message = "Invalid id" });
                 }
                 var departments = _departmentService.FindAll();
                 var sellerForm = new SellerFormViewModel { Departments = departments, Seller = seller };
                 return View(sellerForm);
             }
-            return NotFound();
+            return RedirectToAction(nameof(Error), new { message = "Invalid id" });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller) {
             if (id != seller.Id) {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Invalid id" });
             }
             try {
                 _sellerService.Update(seller);
                 return RedirectToAction(nameof(Index));
-            } catch (NotFoundException) {
-                return NotFound();
-            } catch (DbConcurrencyException) {
-                return BadRequest();
+            } catch (Exception e) {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
+        }
+
+        public IActionResult Error(string message) {
+            var viewModel = new ErrorViewModel
+            {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            return View(viewModel);
         }
     }
 }
