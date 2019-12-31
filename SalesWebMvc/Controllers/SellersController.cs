@@ -30,6 +30,10 @@ namespace SalesWebMvc.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller) {
+            if (!ModelState.IsValid) {
+                var sellerForm = BuildSellerFormViewModel(seller);
+                return View(sellerForm);
+            }
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
@@ -75,6 +79,10 @@ namespace SalesWebMvc.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller) {
+            if (!ModelState.IsValid) {
+                var sellerForm = BuildSellerFormViewModel(seller);
+                return View(sellerForm);
+            }
             if (id != seller.Id) {
                 return RedirectToAction(nameof(Error), new { message = "Invalid id" });
             }
@@ -84,6 +92,12 @@ namespace SalesWebMvc.Controllers {
             } catch (Exception e) {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
+        }
+
+        private SellerFormViewModel BuildSellerFormViewModel(Seller seller) {
+            var departments = _departmentService.FindAll();
+            var sellerForm = new SellerFormViewModel { Departments = departments, Seller = seller };
+            return sellerForm;
         }
 
         public IActionResult Error(string message) {
