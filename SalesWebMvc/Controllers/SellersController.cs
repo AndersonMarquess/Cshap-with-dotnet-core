@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SalesWebMvc.Exceptions;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
@@ -52,8 +53,12 @@ namespace SalesWebMvc.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id) {
-            await _sellerService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try {
+                await _sellerService.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            } catch (IntegrityException) {
+                return RedirectToAction(nameof(Error), new { message = "Unable to delete a salesperson with sales" });
+            }
         }
 
         public async Task<IActionResult> Details(int? id) {
